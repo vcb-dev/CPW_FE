@@ -15,12 +15,13 @@ export function BlockHead({
   titleClassName?: string;
   className?: string;
 }) {
+  // Mobile (< 768px): tiêu đề và câu dẫn căn giữa (Hoàng chốt 2026-11-23); nội dung bên dưới khối vẫn căn trái.
   return (
-    <div className={className}>
-      <h2 className={cn(BLOCK_H2, titleClassName)}>
+    <div className={cn("max-md:text-center", className)}>
+      <h2 className={cn(BLOCK_H2, "max-md:mx-auto", titleClassName)}>
         <RichTitle text={title} />
       </h2>
-      {text && <p className={BLOCK_LEAD}>{text}</p>}
+      {text && <p className={cn(BLOCK_LEAD, "max-md:mx-auto")}>{text}</p>}
     </div>
   );
 }

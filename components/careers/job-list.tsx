@@ -7,7 +7,16 @@ import { JobRow, type JobRowLabels } from "@/components/careers/job-row";
 import type { PublicJob } from "@/lib/api/jobs";
 
 // Mở một vị trí thì vị trí đang mở tự đóng; bấm lại vị trí đang mở để đóng.
-export function JobList({ jobs, labels }: { jobs: PublicJob[]; labels: JobRowLabels }) {
+// `applyTitles` (slug → tên tiếng Việt) là giá trị đưa vào form khi bấm "Ứng tuyển", kể cả ở bản `/en`.
+export function JobList({
+  jobs,
+  labels,
+  applyTitles,
+}: {
+  jobs: PublicJob[];
+  labels: JobRowLabels;
+  applyTitles: Record<string, string>;
+}) {
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const { requestApply } = useApply();
 
@@ -21,7 +30,7 @@ export function JobList({ jobs, labels }: { jobs: PublicJob[]; labels: JobRowLab
               index={index}
               open={openSlug === job.slug}
               onToggle={() => setOpenSlug((current) => (current === job.slug ? null : job.slug))}
-              onApply={() => requestApply(job.title)}
+              onApply={() => requestApply(applyTitles[job.slug] ?? job.title)}
               labels={labels}
             />
           </Reveal>

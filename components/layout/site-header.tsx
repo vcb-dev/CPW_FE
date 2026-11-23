@@ -2,45 +2,26 @@
 
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { Menu, Moon, Sun, X } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import {
-  Sheet,
-  SheetClose,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet";
 import { Link, usePathname } from "@/i18n/navigation";
 import { locales } from "@/lib/i18n/config";
-import { LOGO_URL } from "@/lib/site/business";
 import { useTheme } from "@/lib/theme/use-theme";
 import { cn } from "@/lib/utils";
+import { NAV_ITEMS, isActive } from "./site-nav";
 
-const NAV_ITEMS = [
-  { href: "/", key: "home" },
-  { href: "/about", key: "about" },
-  { href: "/careers", key: "careers" },
-  { href: "/news", key: "news" },
-  { href: "/contact", key: "contact" },
-] as const;
+const LOGO_MARK_URL = "/logo-mark.png";
+const LOGO_WORDMARK_URL = "/logo-wordmark.png";
 
 const toolButton =
   "flex h-11 w-11 items-center justify-center rounded-[11px] border border-[color:var(--vcb-line-strong)] bg-[var(--vcb-panel)] text-foreground transition-colors";
 
-function isActive(pathname: string, href: string) {
-  return href === "/"
-    ? pathname === "/"
-    : pathname === href || pathname.startsWith(`${href}/`);
-}
-
+// Dưới 880px nav chính nằm ở thanh tab dưới đáy (MobileTabBar), header chỉ còn logo, ngôn ngữ và theme.
 export function SiteHeader() {
   const t = useTranslations("Header");
   const lang = useLocale();
   const pathname = usePathname();
   const { theme, setTheme } = useTheme();
-  const [menuOpen, setMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
@@ -70,17 +51,31 @@ export function SiteHeader() {
             : "min-h-[72px] min-[880px]:min-h-[88px]"
         )}
       >
-        <Link href="/" className="flex items-center">
+        {/* Logo ngang: bông hoa + chữ, cắt từ public/logo.png (ảnh vuông, chữ nằm dưới hoa nên thu nhỏ thì chữ chỉ còn ~5px).
+            880–1099px chỉ hiện hoa vì nav 5 mục cần chỗ; dưới 360px thu nhỏ để không tràn ngang cạnh cụm ngôn ngữ/theme. */}
+        <Link
+          href="/"
+          className="flex min-w-0 items-center gap-2.5 max-[360px]:gap-2 min-[1100px]:gap-3"
+        >
           <Image
-            src={LOGO_URL}
+            src={LOGO_MARK_URL}
             alt={t("logoAlt")}
-            width={64}
-            height={64}
+            width={256}
+            height={256}
             preload
             className={cn(
-              "h-12 w-auto transition-[height] duration-300",
-              isScrolled ? "min-[880px]:h-14" : "min-[880px]:h-16"
+              "h-10 w-auto shrink-0 transition-[height] duration-300 max-[360px]:h-9",
+              isScrolled ? "min-[880px]:h-11" : "min-[880px]:h-12"
             )}
+          />
+          <Image
+            src={LOGO_WORDMARK_URL}
+            alt=""
+            aria-hidden
+            width={640}
+            height={96}
+            preload
+            className="h-[15px] w-auto max-[360px]:h-3 min-[880px]:hidden min-[1100px]:block min-[1100px]:h-[18px]"
           />
         </Link>
 
@@ -149,56 +144,6 @@ export function SiteHeader() {
               className="hidden [html[data-theme=light]_&]:block"
             />
           </button>
-
-          {/* Sheet điều khiển bằng state: bấm liên kết thì đóng menu, liên kết vẫn là <a> thường. */}
-          <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-            <SheetTrigger
-              aria-label={t("openMenu")}
-              className={cn(toolButton, "min-[880px]:hidden")}
-            >
-              <Menu size={20} />
-            </SheetTrigger>
-            {/* Tắt nút đóng mặc định (chữ "Close" gõ cứng) và tắt trượt khi người dùng bật reduced-motion. */}
-            <SheetContent
-              side="right"
-              showCloseButton={false}
-              className="motion-reduce:transition-none"
-            >
-              <SheetHeader>
-                <SheetTitle>{t("menuTitle")}</SheetTitle>
-              </SheetHeader>
-              <SheetClose
-                aria-label={t("close")}
-                className="absolute right-1 top-1 flex h-11 w-11 items-center justify-center rounded-md text-muted-foreground transition-colors hover:text-foreground"
-              >
-                <X size={16} aria-hidden />
-              </SheetClose>
-              <nav
-                aria-label={t("primaryNav")}
-                className="flex flex-col gap-1 px-4 pb-4"
-              >
-                {NAV_ITEMS.map((item) => {
-                  const active = isActive(pathname, item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      aria-current={active ? "page" : undefined}
-                      className={cn(
-                        "rounded-[8px] px-3 py-3 text-[1.0625rem] font-medium",
-                        active
-                          ? "bg-[var(--vcb-gold-soft)] text-[color:var(--vcb-gold)]"
-                          : "text-foreground"
-                      )}
-                    >
-                      {t(`nav.${item.key}`)}
-                    </Link>
-                  );
-                })}
-              </nav>
-            </SheetContent>
-          </Sheet>
         </div>
       </div>
     </header>

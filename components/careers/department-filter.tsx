@@ -19,7 +19,8 @@ export function DepartmentFilter({
         : "border-border bg-background hover:bg-muted",
     );
   return (
-    <nav aria-label={label} className="flex flex-wrap gap-2">
+    // Mobile (< 768px): hàng nút lọc căn giữa theo tiêu đề phía trên (Hoàng chốt 2026-11-23).
+    <nav aria-label={label} className="flex flex-wrap gap-2 max-md:justify-center">
       <Link href="/careers" aria-current={!active ? "page" : undefined} className={chip(!active)}>
         {labels.all}
       </Link>

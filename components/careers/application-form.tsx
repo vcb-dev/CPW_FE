@@ -5,16 +5,20 @@ import { ApplicationFormFields } from "@/components/careers/application-form-fie
 import { PageSection } from "@/components/layout/page-section";
 import { getJobs } from "@/lib/api/jobs";
 import type { Locale } from "@/lib/i18n/config";
+import { getApplyTitles } from "@/lib/jobs/apply-titles";
 import { APPLY_ANCHOR_ID } from "@/lib/jobs/constants";
 
 export async function ApplicationForm({ lang }: { lang: Locale }) {
   const [t, messages, jobsResult] = await Promise.all([
     getTranslations({ locale: lang, namespace: "Careers.application" }),
     getMessages({ locale: lang }),
-    getJobs(),
+    getJobs(lang),
   ]);
   // Lỗi tải job: vẫn cho nộp hồ sơ được, chỉ còn mục "Khác" trong dropdown vị trí.
-  const jobTitles = jobsResult.status === "ok" ? jobsResult.data.map((job) => job.title) : [];
+  const jobs = jobsResult.status === "ok" ? jobsResult.data : [];
+  // value = tên tiếng Việt (gửi đi), label = tên đang hiện theo ngôn ngữ trang.
+  const applyTitles = await getApplyTitles(lang, jobs);
+  const positions = jobs.map((job) => ({ value: applyTitles[job.slug] ?? job.title, label: job.title }));
 
   return (
     <PageSection tone="muted">
@@ -28,7 +32,7 @@ export async function ApplicationForm({ lang }: { lang: Locale }) {
             Careers: { application: messages.Careers.application },
           }}
         >
-          <ApplicationFormFields jobTitles={jobTitles} />
+          <ApplicationFormFields positions={positions} />
         </NextIntlClientProvider>
       </div>
     </PageSection>

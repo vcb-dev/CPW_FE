@@ -16,9 +16,10 @@ export function SectionHead({
   flush?: boolean;
   className?: string;
 }) {
+  // Mobile (< 768px): căn giữa như BlockHead (Hoàng chốt 2026-11-23).
   return (
-    <div className={cn("max-w-3xl", flush ? "" : "mb-8", className)}>
-      {eyebrow && <Eyebrow className="mb-4">{eyebrow}</Eyebrow>}
+    <div className={cn("max-w-3xl max-md:mx-auto max-md:text-center", flush ? "" : "mb-8", className)}>
+      {eyebrow && <Eyebrow className="mb-4 max-md:justify-center">{eyebrow}</Eyebrow>}
       <h2 className="text-3xl font-bold leading-[1.12] md:text-5xl">
         {typeof title === "string" ? <RichTitle text={title} /> : title}
       </h2>

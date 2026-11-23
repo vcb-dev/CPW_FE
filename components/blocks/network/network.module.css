@@ -37,6 +37,20 @@
   text-wrap: pretty;
 }
 
+/* Mobile (< 768px): tiêu đề và câu dẫn căn giữa (Hoàng chốt 2026-11-23). Câu dẫn căn giữa nên bỏ vạch nhấn bên trái. */
+@media (max-width: 767px) {
+  .title {
+    margin-inline: auto;
+    text-align: center;
+  }
+  .caption {
+    margin-inline: auto;
+    padding-left: 0;
+    border-left: 0;
+    text-align: center;
+  }
+}
+
 /* Chú giải */
 .legend {
   display: grid;

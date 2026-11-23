@@ -20,6 +20,21 @@ const EMPLOYMENT_TYPES = {
   "Thực tập": "INTERN",
 } as const;
 
+// Giá trị nhóm/địa điểm/hình thức (luôn là tiếng Việt từ backend) → khoá chữ trong namespace "Careers" của messages.
+const JOB_VALUE_KEYS = {
+  "Kinh doanh": "departments.business",
+  "Sáng tạo": "departments.creative",
+  "Vận hành": "departments.operations",
+  "Công nghệ": "departments.technology",
+  "Hà Nội": "locations.hanoi",
+  "Remote / Quốc tế": "locations.remote",
+  "Toàn thời gian": "types.fullTime",
+  "Bán thời gian": "types.partTime",
+  "Thực tập": "types.intern",
+} as const;
+
+export type JobValueKey = (typeof JOB_VALUE_KEYS)[keyof typeof JOB_VALUE_KEYS];
+
 // id của khối form ứng tuyển: nút "Ứng tuyển" trong danh sách cuộn tới đây.
 export const APPLY_ANCHOR_ID = "apply";
 
@@ -29,6 +44,11 @@ export function departmentKeyOf(department: string): DepartmentKey | undefined {
   return own(DEPARTMENTS, department)
     ? DEPARTMENTS[department as keyof typeof DEPARTMENTS]
     : undefined;
+}
+
+// Giá trị lạ (dữ liệu cũ, enum mới chưa có chữ) trả undefined: nơi gọi in nguyên chuỗi gốc.
+export function jobValueKey(value: string): JobValueKey | undefined {
+  return own(JOB_VALUE_KEYS, value) ? JOB_VALUE_KEYS[value as keyof typeof JOB_VALUE_KEYS] : undefined;
 }
 
 export function parseDepartment(raw: string | string[] | undefined): DepartmentKey | undefined {

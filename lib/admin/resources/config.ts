@@ -96,6 +96,7 @@ export const JOBS_CONFIG: ResourceConfig = {
   singular: "vị trí",
   fields: [
     { key: "title", label: "Tên vị trí", type: "text", required: true },
+    { key: "titleEn", label: "Tên vị trí tiếng Anh", type: "text" },
     {
       key: "department",
       label: "Nhóm",
@@ -125,6 +126,7 @@ export const JOBS_CONFIG: ResourceConfig = {
       options: ["Đang tuyển", "Đã đóng"],
     },
     { key: "description", label: "Mô tả công việc", type: "text" },
+    { key: "descriptionEn", label: "Mô tả công việc tiếng Anh", type: "text" },
   ],
   columns: [
     { key: "title", label: "Vị trí" },

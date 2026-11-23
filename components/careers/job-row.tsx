@@ -2,15 +2,17 @@
 
 import { useId } from "react";
 import { Button } from "@/components/ui/button";
-import { Link } from "@/i18n/navigation";
+// import { Link } from "@/i18n/navigation";
 import type { PublicJob } from "@/lib/api/jobs";
 import { splitParagraphs } from "@/lib/jobs/text";
 import { cn } from "@/lib/utils";
 
 export type JobRowLabels = {
   apply: string;
-  viewPage: string;
+  // viewPage: string;
   noDescription: string;
+  /** Chữ đã dịch cho hình thức/địa điểm/nhóm, theo giá trị tiếng Việt gốc. */
+  values: Record<string, string>;
 };
 
 export function JobRow({
@@ -53,7 +55,7 @@ export function JobRow({
                 {[job.type, job.location, job.department].map((text, i) => (
                   <span key={`${i}-${text}`} className="flex items-center gap-2">
                     <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-muted-foreground/30" />
-                    {text}
+                    {labels.values[text] ?? text}
                   </span>
                 ))}
               </span>
@@ -100,12 +102,12 @@ export function JobRow({
               >
                 {labels.apply}
               </Button>
-              <Link
+              {/* <Link
                 href={`/careers/${encodeURIComponent(job.slug)}`}
                 className="text-sm text-muted-foreground underline-offset-4 hover:text-primary hover:underline max-[519px]:inline-flex max-[519px]:min-h-11 max-[519px]:items-center"
               >
                 {labels.viewPage}
-              </Link>
+              </Link> */}
             </div>
           </div>
         </div>
