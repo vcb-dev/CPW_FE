@@ -65,7 +65,7 @@ function HeroCopy({
           className={cn(
             split
               ? "mt-[22px] max-w-[min(52ch,40vw)] text-[clamp(15px,1.2vw,18px)] leading-[1.65] [text-wrap:pretty] text-[color-mix(in_srgb,var(--foreground)_88%,var(--background))] max-[900px]:max-w-none"
-              : cn("mt-6 max-w-[56ch] text-lg leading-relaxed", onDark ? "text-white/85" : "text-muted-foreground"),
+              : cn("mt-6 max-w-[56ch] text-lg leading-relaxed max-md:mx-auto", onDark ? "text-white/85" : "text-muted-foreground"),
           )}
         >
           {text}
@@ -76,14 +76,14 @@ function HeroCopy({
           className={cn(
             split
               ? "mt-[14px] max-w-[min(52ch,40vw)] text-[clamp(15px,1.2vw,18px)] leading-[1.65] [text-wrap:pretty] text-[color-mix(in_srgb,var(--foreground)_88%,var(--background))] max-[900px]:max-w-none"
-              : cn("mt-[14px] max-w-[56ch] text-lg leading-relaxed", onDark ? "text-white/85" : "text-muted-foreground"),
+              : cn("mt-[14px] max-w-[56ch] text-lg leading-relaxed max-md:mx-auto", onDark ? "text-white/85" : "text-muted-foreground"),
           )}
         >
           {text2}
         </p>
       )}
       {buttons.length > 0 && (
-        <div className="mt-8 flex flex-wrap gap-4 max-[519px]:flex-col max-[519px]:gap-3 max-[519px]:text-center">
+        <div className="mt-8 flex flex-wrap gap-4 max-md:justify-center max-[519px]:flex-col max-[519px]:gap-3 max-[519px]:text-center">
           {buttons.map((b) => (
             <BlockLink
               key={`${b.href}-${b.label}`}
@@ -108,7 +108,7 @@ function HeroCopy({
       {proof.length > 0 && (
         <dl
           className={cn(
-            "mt-12 grid max-w-xl grid-cols-1 gap-6 border-t pt-6 sm:grid-cols-3",
+            "mt-12 grid max-w-xl grid-cols-1 gap-6 border-t pt-6 sm:grid-cols-3 max-md:mx-auto",
             onDark ? "border-white/25" : "border-border",
           )}
         >
@@ -162,7 +162,8 @@ export function HeroBlock({ data, lang }: BlockProps) {
   if (slides.length > 0) {
     return (
       <HeroSlider slides={slides}>
-        <div className={cn(styles.in, "max-w-2xl")}>
+        {/* Mobile (< 768px): chữ hero căn giữa (Hoàng chốt 2026-11-23). */}
+        <div className={cn(styles.in, "max-w-2xl max-md:mx-auto max-md:text-center")}>
           <HeroCopy
             title={title}
             tagline={tagline}
@@ -186,7 +187,7 @@ export function HeroBlock({ data, lang }: BlockProps) {
   return (
     <section className="relative flex min-h-[540px] items-center border-b border-border bg-[color-mix(in_srgb,var(--primary)_7%,var(--background))] py-20 max-[900px]:block max-[900px]:min-h-0 max-[900px]:py-12 max-[900px]:pb-10">
       <div className={BLOCK_WRAP}>
-        <div className={cn(styles.in, "max-w-3xl")}>
+        <div className={cn(styles.in, "max-w-3xl max-md:text-center")}>
           <HeroCopy
             title={title}
             tagline={tagline}

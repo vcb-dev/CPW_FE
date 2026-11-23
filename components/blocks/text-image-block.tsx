@@ -46,7 +46,8 @@ export function TextImageBlock({ data, lang }: BlockProps) {
             )}
           </div>
         </Reveal>
-        <Reveal delay={120}>
+        {/* Mobile (< 768px): cột chữ (tiêu đề + 2 đoạn giới thiệu ngắn) căn giữa (Hoàng chốt 2026-11-23). */}
+        <Reveal delay={120} className="max-md:text-center">
           <h2 className="text-[clamp(30px,3.8vw,48px)] font-bold leading-[1.12] tracking-normal text-balance">
             <RichTitle text={title} />
           </h2>

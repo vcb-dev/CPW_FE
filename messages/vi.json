@@ -35,9 +35,6 @@
     "primaryNav": "Điều hướng chính",
     "language": "Ngôn ngữ",
     "themeToggle": "Đổi giao diện sáng hoặc tối",
-    "openMenu": "Mở menu",
-    "close": "Đóng menu",
-    "menuTitle": "Menu",
     "logoAlt": "Viễn Chí Bảo"
   },
   "Footer": {
@@ -140,6 +137,15 @@
       "operations": "Vận hành",
       "technology": "Công nghệ"
     },
+    "types": {
+      "fullTime": "Toàn thời gian",
+      "partTime": "Bán thời gian",
+      "intern": "Thực tập"
+    },
+    "locations": {
+      "hanoi": "Hà Nội",
+      "remote": "Remote / Quốc tế"
+    },
     "empty": "Hiện tại chưa có vị trí nào đang tuyển.",
     "emptyFiltered": "Chưa có vị trí nào trong nhóm này.",
     "error": "Tạm thời không tải được danh sách vị trí. Vui lòng tải lại trang sau ít phút.",
@@ -155,6 +161,7 @@
       "phonePlaceholder": "09xx xxx xxx",
       "position": "Vị trí ứng tuyển",
       "positionPlaceholder": "-- Chọn vị trí --",
+      "positionOther": "Khác",
       "portfolio": "Portfolio / LinkedIn",
       "cv": "CV / Hồ sơ",
       "cvDropzone": "Kéo thả CV vào đây, dán (Ctrl+V) hoặc bấm để chọn — PDF, DOC, DOCX",

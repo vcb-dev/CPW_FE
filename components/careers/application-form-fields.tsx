@@ -151,7 +151,7 @@ const emptyValues: Partial<ApplicationFormValues> = {
   consent: false,
 };
 
-export function ApplicationFormFields({ jobTitles }: { jobTitles: string[] }) {
+export function ApplicationFormFields({ positions }: { positions: { value: string; label: string }[] }) {
   const t = useTranslations("Careers.application");
   const { request } = useApply();
   const [pending, startTransition] = useTransition();
@@ -266,10 +266,10 @@ export function ApplicationFormFields({ jobTitles }: { jobTitles: string[] }) {
           {...register("position")}
         >
           <option value="" disabled>{t("positionPlaceholder")}</option>
-          {jobTitles.map((title) => (
-            <option key={title} value={title}>{title}</option>
+          {positions.map((p) => (
+            <option key={p.value} value={p.value}>{p.label}</option>
           ))}
-          <option value={POSITION_OTHER}>{POSITION_OTHER}</option>
+          <option value={POSITION_OTHER}>{t("positionOther")}</option>
         </select>
         {errors.position && <p className={errorTextClass}>{errorText(errors.position.message)}</p>}
       </div>

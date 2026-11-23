@@ -13,7 +13,8 @@ import { PageSection } from "@/components/layout/page-section";
 import { JsonLd } from "@/components/seo/json-ld";
 import { getJobs } from "@/lib/api/jobs";
 import { hasLocale } from "@/lib/i18n/config";
-import { buildCareersQuery, filterJobsByDepartment, parseDepartment } from "@/lib/jobs/constants";
+import { getApplyTitles } from "@/lib/jobs/apply-titles";
+import { buildCareersQuery, filterJobsByDepartment, jobValueKey, parseDepartment } from "@/lib/jobs/constants";
 import { breadcrumbJsonLd } from "@/lib/seo/json-ld";
 import { buildMetadata } from "@/lib/seo/metadata";
 import { SITE_URL } from "@/lib/seo/site-url";
@@ -29,7 +30,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   const department = parseDepartment((await searchParams).department);
   const [t, result] = await Promise.all([
     getTranslations({ locale: lang, namespace: "Meta" }),
-    getJobs(),
+    getJobs(lang),
   ]);
   return buildMetadata({
     lang,
@@ -52,10 +53,11 @@ export default async function CareersPage({ params, searchParams }: Props) {
     getTranslations({ locale: lang, namespace: "Careers" }),
     getTranslations({ locale: lang, namespace: "Common" }),
     getTranslations({ locale: lang, namespace: "Meta" }),
-    getJobs(),
+    getJobs(lang),
   ]);
 
   const allJobs = result.status === "ok" ? result.data : [];
+  const applyTitles = await getApplyTitles(lang, allJobs);
   const jobs = filterJobsByDepartment(allJobs, department);
   const emphasis = {
     em: (chunks: React.ReactNode) => <em className="not-italic text-primary">{chunks}</em>,
@@ -67,10 +69,17 @@ export default async function CareersPage({ params, searchParams }: Props) {
     operations: t("departments.operations"),
     technology: t("departments.technology"),
   };
+  // Hình thức/địa điểm/nhóm đến từ API bằng tiếng Việt: dịch sẵn ở server, giá trị lạ giữ nguyên chuỗi gốc.
+  const values: Record<string, string> = {};
+  for (const value of allJobs.flatMap((job) => [job.type, job.location, job.department])) {
+    const key = jobValueKey(value);
+    values[value] = key ? t(key) : value;
+  }
   const rowLabels = {
     apply: t("row.apply"),
-    viewPage: t("row.viewPage"),
+    // viewPage: t("row.viewPage"),
     noDescription: t("detail.noDescription"),
+    values,
   };
 
   return (
@@ -110,7 +119,7 @@ export default async function CareersPage({ params, searchParams }: Props) {
                 {department ? t("emptyFiltered") : t("empty")}
               </p>
             ) : (
-              <JobList jobs={jobs} labels={rowLabels} />
+              <JobList jobs={jobs} labels={rowLabels} applyTitles={applyTitles} />
             )}
           </div>
         </PageSection>

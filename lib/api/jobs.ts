@@ -1,9 +1,11 @@
 import { apiGet } from "./client";
 import type { ApiResult } from "./result";
 import { CACHE_TAGS } from "./tags";
+import type { Locale } from "../i18n/config";
 
-// Hình dạng GET /jobs/public (cpw_be/src/jobs/schemas): chỉ trả việc có status "Đang tuyển".
-// createdAt có mặt vì schema bật timestamps; để optional vì Swagger không mô tả.
+// Hình dạng GET /jobs/public?lang=vi|en (cpw_be/src/jobs/dto/public-job.dto.ts): chỉ trả việc có status "Đang tuyển".
+// `title`/`description` đã được backend giải theo `lang` (en thiếu bản dịch thì về tiếng Việt, theo từng field).
+// `description`, `createdAt` là optional như trong PublicJobDto (mô tả trống thì backend bỏ field).
 export interface PublicJob {
   slug: string;
   title: string;
@@ -27,8 +29,8 @@ function isJob(value: unknown): value is PublicJob {
   );
 }
 
-export async function getJobs(): Promise<ApiResult<PublicJob[]>> {
-  const result = await apiGet<unknown>("/jobs/public", {
+export async function getJobs(lang: Locale): Promise<ApiResult<PublicJob[]>> {
+  const result = await apiGet<unknown>(`/jobs/public?lang=${lang}`, {
     tags: [CACHE_TAGS.jobs],
   });
   if (result.status === "error") return result;
@@ -38,10 +40,11 @@ export async function getJobs(): Promise<ApiResult<PublicJob[]>> {
 }
 
 export async function getJobBySlug(
-  slug: string
+  slug: string,
+  lang: Locale
 ): Promise<ApiResult<PublicJob>> {
   const result = await apiGet<unknown>(
-    `/jobs/public/${encodeURIComponent(slug)}`,
+    `/jobs/public/${encodeURIComponent(slug)}?lang=${lang}`,
     {
       tags: [CACHE_TAGS.jobs],
     }

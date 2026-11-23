@@ -33,9 +33,13 @@ export function PageHero({ eyebrow, title, lead, before, aside, narrow, compact,
           aside && "grid items-center gap-12 md:grid-cols-[1.1fr_0.9fr]",
         )}
       >
-        <div className={cn(styles.in, narrow && "max-w-3xl")}>
+        {/* Mobile (< 768px): hero trang danh sách căn giữa (Hoàng chốt 2026-11-23). Trang chi tiết (narrow) giữ căn
+            trái như bài viết, nút quay lại vẫn neo trái. */}
+        <div className={cn(styles.in, narrow ? "max-w-3xl" : "max-md:text-center")}>
           {before}
-          {eyebrow && <Eyebrow className={compact ? "mb-4" : "mb-6"}>{eyebrow}</Eyebrow>}
+          {eyebrow && (
+            <Eyebrow className={cn(compact ? "mb-4" : "mb-6", !narrow && "max-md:justify-center")}>{eyebrow}</Eyebrow>
+          )}
           <h1
             className={cn(
               "break-words font-bold leading-[1.12]",
@@ -49,12 +53,14 @@ export function PageHero({ eyebrow, title, lead, before, aside, narrow, compact,
               className={cn(
                 "max-w-[56ch] leading-relaxed text-muted-foreground",
                 compact ? "mt-4 text-base md:text-lg" : "mt-6 text-lg",
+                !narrow && "max-md:mx-auto",
               )}
             >
               {lead}
             </p>
           )}
-          {children && <div className="mt-8">{children}</div>}
+          {/* Hàng chip (danh sách flex) cũng dồn vào giữa trên mobile. */}
+          {children && <div className={cn("mt-8", !narrow && "max-md:[&>*]:justify-center")}>{children}</div>}
         </div>
 
         {aside && (

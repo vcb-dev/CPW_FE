@@ -8,6 +8,7 @@ import { Link } from "@/i18n/navigation";
 import { getJobBySlug } from "@/lib/api/jobs";
 import { getSiteSettings } from "@/lib/api/site-settings";
 import { hasLocale } from "@/lib/i18n/config";
+import { jobValueKey } from "@/lib/jobs/constants";
 import { splitParagraphs } from "@/lib/jobs/text";
 import { brandName } from "@/lib/site/contact-info";
 import { breadcrumbJsonLd, jobPostingJsonLd } from "@/lib/seo/json-ld";
@@ -28,12 +29,12 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { lang, slug } = await params;
   if (!hasLocale(lang)) return {};
-  const result = await getJobBySlug(slug);
+  const result = await getJobBySlug(slug, lang);
   if (result.status !== "ok") return { robots: { index: false, follow: false } };
   const job = result.data;
   const t = await getTranslations({ locale: lang, namespace: "Meta" });
   const description = splitParagraphs(job.description)[0]?.slice(0, 160) ?? t("careers.description");
-  // Dữ liệu việc làm chỉ có tiếng Việt (spec R9): bản en trỏ canonical về bản vi, không hreflang.
+  // Chưa làm SEO song ngữ cho việc làm (spec 2026-11-23 D6): bản en trỏ canonical về bản vi, không hreflang.
   return buildMetadata({
     lang,
     path: `/careers/${encodeURIComponent(slug)}`,
@@ -50,7 +51,7 @@ export default async function JobDetailPage({ params }: Props) {
   const { lang, slug } = await params;
   if (!hasLocale(lang)) notFound();
 
-  const result = await getJobBySlug(slug);
+  const result = await getJobBySlug(slug, lang);
   if (result.status === "not-found") notFound();
   // Lỗi tạm thời: ném để error boundary xử lý (Task 9); Next giữ bản cache cũ nếu có.
   if (result.status === "error") throw new Error(`Không tải được vị trí ${slug}`);
@@ -63,8 +64,13 @@ export default async function JobDetailPage({ params }: Props) {
     getSiteSettings(),
   ]);
   const paragraphs = splitParagraphs(job.description);
+  // Nhóm/địa điểm/hình thức đến từ API bằng tiếng Việt; giá trị lạ giữ nguyên chuỗi gốc.
+  const valueLabel = (value: string) => {
+    const key = jobValueKey(value);
+    return key ? t(key) : value;
+  };
   const url = `${SITE_URL}/${lang}/careers/${encodeURIComponent(slug)}`;
-  // JobPosting chỉ phát ở bản vi để không trùng với bản en (cùng nội dung tiếng Việt).
+  // JobPosting chỉ phát ở bản vi (spec 2026-11-23 D6).
   const posting =
     lang === "vi"
       ? jobPostingJsonLd({ siteUrl: SITE_URL, url, job, brand: brandName(settings, meta("siteName")) })
@@ -105,7 +111,7 @@ export default async function JobDetailPage({ params }: Props) {
                 <dt className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
                   {t(`detail.${key}`)}
                 </dt>
-                <dd className="mt-1 break-words text-base font-medium">{value}</dd>
+                <dd className="mt-1 break-words text-base font-medium">{valueLabel(value)}</dd>
               </div>
             ))}
           </dl>

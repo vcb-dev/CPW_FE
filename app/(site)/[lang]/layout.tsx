@@ -13,13 +13,15 @@ import { brandName } from "@/lib/site/contact-info";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
+import { MobileTabBar } from "@/components/layout/mobile-tab-bar";
 import { LenisProvider } from "@/components/layout/lenis-provider";
 import { Toaster } from "@/components/ui/sonner";
 
 type Props = { children: React.ReactNode; params: Promise<{ lang: string }> };
 
-export const dynamicParams = false;
-
+// Không đặt dynamicParams = false ở layout này: Next gộp dynamicParams của mọi segment trên đường đi (chỉ cần một
+// segment false là cả route false), nên news/[slug] và careers/[slug] (generateStaticParams trả []) sẽ 404 hết trên
+// bản build, dù trang tự đặt true. Ngôn ngữ lạ đã bị chặn bằng notFound() bên dưới và trong i18n/request.ts.
 export function generateStaticParams() {
   return locales.map((lang) => ({ lang }));
 }
@@ -49,7 +51,9 @@ export default async function SiteLayout({ children, params }: Props) {
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
-      <body className="flex flex-col font-body">
+      {/* --mobile-tabbar-space = chiều cao MobileTabBar (64px + vùng an toàn iPhone) dưới 880px, 0 từ 880px:
+          chừa chỗ để thanh tab không che footer, và đẩy toast lên trên thanh tab. */}
+      <body className="flex flex-col font-body pb-[var(--mobile-tabbar-space)] [--mobile-tabbar-space:calc(4rem_+_env(safe-area-inset-bottom))] min-[880px]:[--mobile-tabbar-space:0px]">
         <JsonLd data={organizationJsonLd(SITE_URL, brand, settings)} />
         <JsonLd data={webSiteJsonLd(SITE_URL, brand)} />
         {/* Chỉ gửi xuống client các nhóm chữ mà client component dùng. */}
@@ -65,7 +69,12 @@ export default async function SiteLayout({ children, params }: Props) {
             {/* padding-top = chiều cao header lúc chưa cuộn (72px mobile, 88px từ 880px) */}
             <main id="main" tabIndex={-1} className="flex-1 pt-[72px] min-[880px]:pt-[88px]">{children}</main>
             <SiteFooter />
-            <Toaster />
+            <MobileTabBar />
+            {/* Giữ khoảng mặc định của sonner (24px, mobile 16px) và cộng thêm chỗ của thanh tab. */}
+            <Toaster
+              offset={{ bottom: "calc(24px + var(--mobile-tabbar-space, 0px))" }}
+              mobileOffset={{ bottom: "calc(16px + var(--mobile-tabbar-space, 0px))" }}
+            />
           </LenisProvider>
         </NextIntlClientProvider>
       </body>

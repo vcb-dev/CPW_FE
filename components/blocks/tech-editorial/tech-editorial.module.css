@@ -44,6 +44,23 @@
   text-wrap: pretty;
 }
 
+/* Mobile (< 768px): cả khối căn giữa, gồm tiêu đề, câu dẫn, số liệu và 2 thẻ cuối; tiêu đề có chữ nới khoảng cách cho
+   chữ có dấu khỏi dính nhau (Hoàng chốt 2026-11-23; desktop giữ nguyên như mockup). */
+@media (max-width: 767px) {
+  .title,
+  .sub {
+    margin-inline: auto;
+    text-align: center;
+  }
+  .top,
+  .foot {
+    text-align: center;
+  }
+  .title {
+    letter-spacing: -0.015em;
+  }
+}
+
 .top {
   display: grid;
   grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
@@ -574,5 +591,14 @@
   .orbDet,
   .orbFly {
     display: none;
+  }
+}
+
+/* Mobile (< 768px): đặt sau định nghĩa .footTitle/.detTitle để thắng chúng; nới khoảng cách chữ cho chữ có dấu khỏi
+   dính nhau (Hoàng chốt 2026-11-23; desktop giữ nguyên như mockup). */
+@media (max-width: 767px) {
+  .footTitle,
+  .detTitle {
+    letter-spacing: -0.015em;
   }
 }

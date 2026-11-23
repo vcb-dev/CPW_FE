@@ -7,6 +7,15 @@ import styles from "./hero-slider.module.css";
 
 const pad = (n: number) => String(n).padStart(2, "0");
 
+// Lưu cứng theo từng video (Hoàng chốt 2026-11-23): giây bắt đầu của bản điện thoại. Video hero hiện tại mở đầu bằng cảnh
+// quay cận tạp dề (0–2,5 s), cắt dọc chỉ thấy tạp dề, nên điện thoại bắt đầu từ cảnh người thợ. Video khác không có
+// trong bảng thì chạy từ đầu như thường.
+const MOBILE_START: Record<string, number> = {
+  "vcb/pages/poyo3inx7vh2qpxwfyqr": 2.5,
+};
+const mobileStartOf = (src: string) =>
+  Object.entries(MOBILE_START).find(([publicId]) => src.includes(`/${publicId}.`))?.[1];
+
 // Hero tràn màn hình: ảnh xếp chồng, ảnh mới nở đè lên ảnh cũ. `children` là phần chữ do server render (giữ <h1>
 // trong HTML), nằm đè lên lớp ảnh. Việc tự chuyển do chính thanh tiến trình điều khiển (animationend), nên
 // dừng/chạy lại theo CSS và tắt hẳn khi prefers-reduced-motion mà không cần timer riêng.
@@ -52,6 +61,8 @@ export function HeroSlider({ slides, children }: { slides: string[]; children: R
                     alt=""
                     sizes="100vw"
                     variant="loop"
+                    portraitOnMobile
+                    mobileStart={mobileStartOf(src)}
                     className="object-cover"
                     imageProps={i === 0 ? { preload: true, fetchPriority: "high" } : undefined}
                   />
@@ -65,8 +76,7 @@ export function HeroSlider({ slides, children }: { slides: string[]; children: R
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-4 py-16 md:py-24">{children}</div>
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20">
-        <div className="mx-auto flex max-w-[1240px] items-end justify-between px-4 pb-6 md:pb-8">
-          <span aria-hidden className={styles.cue} />
+        <div className="mx-auto flex max-w-[1240px] items-end justify-end px-4 pb-6 md:pb-8">
           {total > 1 && (
             <div className="pointer-events-auto flex items-center gap-4">
               <span aria-hidden className="text-sm font-semibold tabular-nums tracking-widest text-white/90">

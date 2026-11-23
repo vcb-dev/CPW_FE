@@ -26,6 +26,14 @@
   color: #fff;
   text-wrap: balance;
 }
+/* Mobile (< 768px): tiêu đề căn giữa, thẳng với chiếc nhẫn bên dưới, và nới khoảng cách chữ cho chữ có dấu khỏi dính
+   nhau (Hoàng chốt 2026-11-23; desktop giữ nguyên như mockup). */
+@media (max-width: 767px) {
+  .h {
+    text-align: center;
+    letter-spacing: -0.015em;
+  }
+}
 
 .l1,
 .l2 {

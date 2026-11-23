@@ -35,9 +35,6 @@
     "primaryNav": "Main navigation",
     "language": "Language",
     "themeToggle": "Switch between light and dark theme",
-    "openMenu": "Open menu",
-    "close": "Close menu",
-    "menuTitle": "Menu",
     "logoAlt": "Viễn Chí Bảo"
   },
   "Footer": {
@@ -140,6 +137,15 @@
       "operations": "Operations",
       "technology": "Technology"
     },
+    "types": {
+      "fullTime": "Full-time",
+      "partTime": "Part-time",
+      "intern": "Internship"
+    },
+    "locations": {
+      "hanoi": "Hanoi",
+      "remote": "Remote / International"
+    },
     "empty": "There are no open positions right now.",
     "emptyFiltered": "There are no open positions in this team.",
     "error": "The job list is temporarily unavailable. Please reload the page in a few minutes.",
@@ -155,6 +161,7 @@
       "phonePlaceholder": "09xx xxx xxx",
       "position": "Position applying for",
       "positionPlaceholder": "-- Select a position --",
+      "positionOther": "Other",
       "portfolio": "Portfolio / LinkedIn",
       "cv": "CV / Resume",
       "cvDropzone": "Drag and drop your CV here, paste (Ctrl+V), or click to choose — PDF, DOC, DOCX",
@@ -200,7 +207,7 @@
       "location": "Location",
       "type": "Type",
       "noDescription": "Please contact us for more details about this position.",
-      "applyNote": "Applications are received through the contact page. Job details are currently available in Vietnamese only."
+      "applyNote": "Applications are received through the contact page."
     }
   },
   "Contact": {
