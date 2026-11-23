@@ -17,7 +17,12 @@ export interface PublicJob {
   createdAt?: string;
 }
 
-function isJob(value: unknown): value is PublicJob {
+type RawPublicJob = PublicJob & {
+  titleEn?: string;
+  descriptionEn?: string;
+};
+
+function isJob(value: unknown): value is RawPublicJob {
   if (typeof value !== "object" || value === null) return false;
   const v = value as Record<string, unknown>;
   return (
@@ -29,6 +34,27 @@ function isJob(value: unknown): value is PublicJob {
   );
 }
 
+// Khi backend chưa giải sẵn ngôn ngữ (vẫn trả kèm titleEn/descriptionEn từ document gốc), tự chọn theo `lang`.
+// Khi backend đã giải sẵn (không còn titleEn/descriptionEn trong response), giữ nguyên `title` và `description`.
+function resolveJob(doc: RawPublicJob, lang: Locale): PublicJob {
+  const isEn = lang === "en";
+  const titleEn = typeof doc.titleEn === "string" ? doc.titleEn.trim() : "";
+  const descEn = typeof doc.descriptionEn === "string" ? doc.descriptionEn.trim() : "";
+  const descVi = typeof doc.description === "string" ? doc.description.trim() : "";
+  const description = (isEn && descEn ? descEn : descVi) || undefined;
+
+  return {
+    slug: doc.slug,
+    title: isEn && titleEn ? titleEn : doc.title,
+    department: doc.department,
+    location: doc.location,
+    type: doc.type,
+    status: doc.status,
+    ...(description ? { description } : {}),
+    ...(doc.createdAt ? { createdAt: doc.createdAt } : {}),
+  };
+}
+
 export async function getJobs(lang: Locale): Promise<ApiResult<PublicJob[]>> {
   const result = await apiGet<unknown>(`/jobs/public?lang=${lang}`, {
     tags: [CACHE_TAGS.jobs],
@@ -36,7 +62,10 @@ export async function getJobs(lang: Locale): Promise<ApiResult<PublicJob[]>> {
   if (result.status === "error") return result;
   if (result.status === "not-found") return { status: "ok", data: [] };
   if (!Array.isArray(result.data)) return { status: "error" };
-  return { status: "ok", data: result.data.filter(isJob) };
+  return {
+    status: "ok",
+    data: result.data.filter(isJob).map((job) => resolveJob(job, lang)),
+  };
 }
 
 export async function getJobBySlug(
@@ -51,6 +80,6 @@ export async function getJobBySlug(
   );
   if (result.status !== "ok") return result;
   return isJob(result.data)
-    ? { status: "ok", data: result.data }
+    ? { status: "ok", data: resolveJob(result.data, lang) }
     : { status: "error" };
 }
